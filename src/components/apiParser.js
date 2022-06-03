@@ -1,22 +1,25 @@
 const APIParser = (() => {
   const parseCities = (data) => {
     const arr = [];
-
-    data.forEach((e) => {
-      arr.push({
-        cityName: e.name,
-        country: e.country,
-        lat: e.lat,
-        lon: e.lon,
+    try {
+      data.forEach((e) => {
+        arr.push({
+          cityName: e.name,
+          country: e.country,
+          lat: e.lat,
+          lon: e.lon,
+        });
       });
-    });
-    return arr;
+      return arr;
+    } catch (e) {
+      return e;
+    }
   };
 
   const parseWeather = (data) => {
     const obj = {
       cityName: data.name,
-      description: data.weather.description,
+      description: data.weather[0].description,
       temp: data.main.temp,
       humidity: data.main.humidity,
       windSpeed: data.wind.speed,
