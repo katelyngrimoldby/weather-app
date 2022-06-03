@@ -23,9 +23,9 @@ const API = (() => {
     try {
       const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&units=metric&appid=6f84b948b64a49ec4618c61cb10bc7dc`, { mode: 'cors' });
       const data = response.json();
-      console.log(data);
+      return data;
     } catch (e) {
-      console.log(e);
+      return e;
     }
   };
   return { getCityOptions, getCityCountryOptions, getWeatherData };
