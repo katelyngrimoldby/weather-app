@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react"
 import axios from "axios"
+import menuBtn from './assets/menu.svg'
 
 interface weatherData {
   coord: {
@@ -117,7 +118,24 @@ function App() {
 
   return (
     <>
-      
+      <header>
+        <button type="button" aria-label="Open Menu"><img src={menuBtn} alt="Menu" width="24" height="24" /></button>
+        <span>Dark/Light</span>
+      </header>
+      <main>
+        <h1>{data?.name}</h1>
+        <div>
+          <img src={`http://openweathermap.org/img/wn/${data?.weather[0].icon}@2x.png`} alt={data?.weather[0].main} />
+          <div>
+            <span>{data?.main.temp}</span>
+            <span>{data?.weather[0].description}</span>
+          </div>
+          <div>
+            <span>Feels Like {data?.main.feels_like} | Humidity {data?.main.humidity}%</span>
+            <span>Wind {data && getDirection(data.wind.deg)} {data?.wind.speed}{unit == 'metric' ? 'Km/h' : 'M/h'}</span>
+          </div>
+        </div>
+      </main>
     </>
   )
 }
