@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import axios from "axios"
-import {weatherData} from '../types'
+import {weatherData, geoData} from '../types'
 import menuBtn from './assets/menu.svg'
 import closeBtn from './assets/close.svg'
 import locationBtn from './assets/location.svg';
@@ -9,50 +9,63 @@ import Current from './components/Current'
 
 async function get<T> (path: string): Promise<T> {
   const {data} = await axios.get(path);
-
   return data;
 }
-
-
 
 function App() {
   const geolocation = navigator.geolocation;
   const [location, setLocation] = useState({lat: 44.34, lon: 10.99});
+  const [locationList, setLocationList] = useState([]);
   const [input, setInput] = useState("");
   const [unit, setUnit] =useState<'metric' | 'imperial'>('metric')
-  const [data, setData] = useState<undefined | weatherData>()
+  const [currentdata, setCurrentData] = useState<undefined | weatherData>()
+  const [geoData, setGeoData] = useState<geoData[]>([])
 
-  const setPosition = async (input: GeolocationPosition) => {
-    setLocation({lat: input.coords.latitude, lon: input.coords.longitude})
-    console.log(input.coords.latitude);
-    const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${input.coords.latitude}&lon=${input.coords.longitude}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`)
-
-    setData(data);
-  }
-
-  const defaultData = async () => {
-    const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`)
-      setData(data);
-  }
-
-  // Initial data population
-  useMemo(async() => {
-    geolocation.getCurrentPosition(setPosition, defaultData);
-  }, [])
+  const isInitialMount = useRef(true);
 
   //Update data when location or units change
+  // useEffect(() => {
+  //   const setPosition = async (input: GeolocationPosition) => {
+  //     setLocation({lat: input.coords.latitude, lon: input.coords.longitude})
+
+  //     // const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${input.coords.latitude}&lon=${input.coords.longitude}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
+
+  //     // setCurrentData(data);
+  //   }
+
+  //   const defaultData = async () => {
+  //     const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`)
+  //       setCurrentData(data);
+  //   }
+  //   const fetchData = async () => {
+  //     const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
+
+  //     setCurrentData(data);
+  //   }
+
+  //   if(isInitialMount.current) {
+  //     geolocation.getCurrentPosition(setPosition, defaultData)
+  //     isInitialMount.current = false;
+  //   } else {
+  //     fetchData().catch(console.error);
+  //   }
+
+    
+  // }, [location, unit])
+
+  // handle API call for search function
   useEffect(() => {
     const fetchData = async () => {
-      const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
-
-      setData(data);
+      const data = await get<geoData[]>(`http://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${import.meta.env.VITE_API_KEY}`)
+      setGeoData(data);
     }
-
-    fetchData().catch(console.error);
-  }, [location, unit])
-
-  
-
+    if(input.length > 0) {
+      fetchData().catch(console.error);
+    } else {
+      setGeoData([]);
+    }
+  }, [input])
+ 
   return (
     <>
       <header>
@@ -61,11 +74,15 @@ function App() {
         <nav>
         <button type="button" aria-label="Close Menu"><img src={closeBtn} alt="Close" width="24" height="24" /></button>
         <div>
-          <input type="search" name="search" id="search" placeholder="Search for a city"/>
+          <input type="search" name="search" id="search" placeholder="Search for a city" value={input} onChange={(event) => {
+            setInput(event.target.value)
+          }} />
           <button type="button" aria-label="Use current location"><img src={locationBtn} alt="Location" width="24" height="24" /></button>
         </div>
         <div>
-          {/*Location lists will go here*/}
+          {geoData.length > 0 && geoData.map((item, id) => {
+            return <div key={id + Date.now()}>{item.name}</div>
+          })}
         </div>
         <div>
           <div><button type="button" onClick={() => {
@@ -78,7 +95,7 @@ function App() {
         </nav>
       </header>
       <main>
-      {data && <Current data={data} unit={unit} />}
+      {currentdata && <Current data={currentdata} unit={unit} />}
       </main>
     </>
   )
