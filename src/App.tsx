@@ -14,7 +14,7 @@ async function get<T> (path: string): Promise<T> {
 
 function App() {
   const geolocation = navigator.geolocation;
-  const [location, setLocation] = useState({lat: 44.34, lon: 10.99});
+  const [location, setLocation] = useState<undefined | {lat: number, lon: number}>();
   const [locationList, setLocationList] = useState([]);
   const [input, setInput] = useState("");
   const [unit, setUnit] =useState<'metric' | 'imperial'>('metric')
@@ -24,34 +24,32 @@ function App() {
   const isInitialMount = useRef(true);
 
   //Update data when location or units change
-  // useEffect(() => {
-  //   const setPosition = async (input: GeolocationPosition) => {
-  //     setLocation({lat: input.coords.latitude, lon: input.coords.longitude})
+  useEffect(() => {
+    const setPosition = async (input: GeolocationPosition) => {
+      setLocation({lat: input.coords.latitude, lon: input.coords.longitude}) 
+    }
 
-  //     // const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${input.coords.latitude}&lon=${input.coords.longitude}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
+    const defaultData = async () => {
+      setLocation({lat: 44.34, lon: 10.99})
+    }
+    const fetchData = async () => {
+      if(location) {
+        const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${location?.lat}&lon=${location?.lon}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
 
-  //     // setCurrentData(data);
-  //   }
+      setCurrentData(data);
+      }
+      
+    }
 
-  //   const defaultData = async () => {
-  //     const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`)
-  //       setCurrentData(data);
-  //   }
-  //   const fetchData = async () => {
-  //     const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
-
-  //     setCurrentData(data);
-  //   }
-
-  //   if(isInitialMount.current) {
-  //     geolocation.getCurrentPosition(setPosition, defaultData)
-  //     isInitialMount.current = false;
-  //   } else {
-  //     fetchData().catch(console.error);
-  //   }
+    if(isInitialMount.current) {
+      geolocation.getCurrentPosition(setPosition, defaultData)
+      isInitialMount.current = false;
+    } else {
+      fetchData().catch(console.error);
+    }
 
     
-  // }, [location, unit])
+  }, [location, unit])
 
   // handle API call for search function
   useEffect(() => {
