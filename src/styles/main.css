@@ -1,0 +1,127 @@
+@import 'variables.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@media screen and (min-width: 0px) {
+  .iconBtn {
+    background: none;
+    border: none;
+  }
+
+  header {
+    display: flex;
+  }
+
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    padding: 3%;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--background-accent);
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    transform: translate(-100%);
+    transition: transform 300ms ease-in-out;
+  }
+
+  .open {
+    transform: translate(0);
+  }
+
+  .close {
+    align-self: end;
+    svg {
+      width: 2rem;
+    height: 2rem;
+    }
+    
+  }
+  
+  .navContent {
+    
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-between;
+    gap: 2rem;
+    height: 100%;
+  }
+
+  .searchBar {
+    
+    button {
+      vertical-align: middle;
+      margin-left: 0.5rem;
+    }
+
+    input {
+      padding: 0.5rem 1rem;
+      border: 2px solid var(--accent);
+      border-radius: 5px;
+      background-color: var(--background-accent);
+      color: var(--text-main);
+
+      &::placeholder {
+        color: #64748b;
+      }
+
+      &:focus {
+        outline: none;
+        background-color: var(--background-main);
+      }
+    }
+  }
+
+  .list {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: space-between;
+  }
+
+  .searchItem {
+    width: fit-content;
+    border: none;
+    background: none;
+    color: var(--text-main);
+  }
+
+  .listItem {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    button {
+      vertical-align: middle;
+      border: none;
+      background: none;
+      color: var(--text-main);
+    }
+  }
+
+  .unitBtns {
+    border: 1px solid var(--text-main);
+
+    button {
+      background: none;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      color: var(--text-main);
+    }
+    
+    .active {
+      background-color: var(--text-main);
+      color: var(--background-main)
+    }
+  }
+}
