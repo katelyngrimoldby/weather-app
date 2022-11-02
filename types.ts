@@ -61,4 +61,12 @@ interface geoData {
   state?: string,
 }
 
-export type {weatherData, geoData};
+interface locationData {
+  name: string,
+  state?: string,
+  country: string,
+  lat: number,
+  lon: number,
+}
+
+export type {weatherData, geoData, locationData};
