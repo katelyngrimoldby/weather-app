@@ -1,0 +1,17 @@
+
+
+:root {
+  --background-main: #F8FAFC;
+  --background-accent: #F1F5F9;
+  --text-main: #334155;
+  --text-accent: #1E293B;
+  --accent: #E2E8F0
+}
+
+[data-theme: dark] {
+  --background-main: #1E293B;
+  --background-accent: #334155;
+  --text-main: #F1F5F9;
+  --text-accent: #F8FAFC;
+  --accent: #0F172A
+}
