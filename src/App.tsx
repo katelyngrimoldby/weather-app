@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import axios from "axios"
-import {weatherData, geoData} from '../types'
+import {weatherData, geoData, locationData} from '../types'
 import menuBtn from './assets/menu.svg'
 import closeBtn from './assets/close.svg'
 import locationBtn from './assets/location.svg';
@@ -15,7 +15,7 @@ async function get<T> (path: string): Promise<T> {
 function App() {
   const geolocation = navigator.geolocation;
   const [location, setLocation] = useState<undefined | {lat: number, lon: number}>();
-  const [locationList, setLocationList] = useState([]);
+  const [locationList, setLocationList] = useState<locationData[]>([]);
   const [input, setInput] = useState("");
   const [unit, setUnit] =useState<'metric' | 'imperial'>('metric')
   const [currentdata, setCurrentData] = useState<undefined | weatherData>()
@@ -23,12 +23,12 @@ function App() {
 
   const isInitialMount = useRef(true);
 
+  const setPosition = async (input: GeolocationPosition) => {
+    setLocation({lat: input.coords.latitude, lon: input.coords.longitude}) 
+  }
+
   //Update data when location or units change
   useEffect(() => {
-    const setPosition = async (input: GeolocationPosition) => {
-      setLocation({lat: input.coords.latitude, lon: input.coords.longitude}) 
-    }
-
     const defaultData = async () => {
       setLocation({lat: 44.34, lon: 10.99})
     }
@@ -75,12 +75,35 @@ function App() {
           <input type="search" name="search" id="search" placeholder="Search for a city" value={input} onChange={(event) => {
             setInput(event.target.value)
           }} />
-          <button type="button" aria-label="Use current location"><img src={locationBtn} alt="Location" width="24" height="24" /></button>
+          <button type="button" aria-label="Use current location" onClick={() => {
+            geolocation.getCurrentPosition(setPosition)
+          }}><img src={locationBtn} alt="Location" width="24" height="24" /></button>
         </div>
         <div>
-          {geoData.length > 0 && geoData.map((item, id) => {
-            return <div key={id + Date.now()}>{item.name}</div>
-          })}
+          {geoData.length > 0 ? geoData.map((item, id) => {
+            return(
+              <div key={id + Date.now()}>
+                <button type="button" onClick={() => {
+                  item.state ? 
+                  setLocationList([...locationList, {name: item.name, country: item.country,state: item.state, lat: item.lat, lon: item.lon}]) : 
+                  setLocationList([...locationList, {name: item.name, country: item.country, lat: item.lat, lon: item.lon}])
+                  setInput('');
+                }}>{item.name}{item.state && `, ${item.state}`}, {item.country}</button>
+              </div>)
+          }) : locationList.map((item, id) => {
+            return(
+              <div key={id + Date.now()}>
+                <button type="button" onClick={() => {
+                  setLocation({lat: item.lat, lon: item.lon});
+                }}>{item.name}{item.state && `, ${item.state}`}, {item.country}</button>
+                <button type="button" aria-label="Delete Location"onClick={() => {
+                  const copy = [...locationList].filter(e => {
+                    return (e.lat != item.lat && e.lon != item.lon)
+                  });
+                  setLocationList(copy);
+                }}><img src={closeBtn} alt="Delete" width="24" height="24" /></button>
+              </div>)
+          })} 
         </div>
         <div>
           <div><button type="button" onClick={() => {
