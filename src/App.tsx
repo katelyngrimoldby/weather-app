@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react"
 import axios from "axios"
 import {weatherData, geoData, locationData} from '../types'
-import menuBtn from './assets/menu.svg'
-import closeBtn from './assets/close.svg'
-import locationBtn from './assets/location.svg';
+import MenuIcon from "./components/MenuIcon"
+import CrossIcon from "./components/CrossIcon"
+import LocationIcon from "./components/LocationIcon"
 import Current from './components/Current'
+import './styles/main.css'
 
 
 async function get<T> (path: string): Promise<T> {
@@ -14,6 +15,7 @@ async function get<T> (path: string): Promise<T> {
 
 function App() {
   const geolocation = navigator.geolocation;
+  const [open, setOpen] = useState(false);
   const [location, setLocation] = useState<undefined | {lat: number, lon: number}>();
   const [locationList, setLocationList] = useState<locationData[]>([]);
   const [input, setInput] = useState("");
@@ -28,28 +30,28 @@ function App() {
   }
 
   //Update data when location or units change
-  useEffect(() => {
-    const defaultData = async () => {
-      setLocation({lat: 44.34, lon: 10.99})
-    }
-    const fetchData = async () => {
-      if(location) {
-        const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${location?.lat}&lon=${location?.lon}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
+  // useEffect(() => {
+  //   const defaultData = async () => {
+  //     setLocation({lat: 44.34, lon: 10.99})
+  //   }
+  //   const fetchData = async () => {
+  //     if(location) {
+  //       const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${location?.lat}&lon=${location?.lon}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
 
-      setCurrentData(data);
-      }
+  //     setCurrentData(data);
+  //     }
       
-    }
+  //   }
 
-    if(isInitialMount.current) {
-      geolocation.getCurrentPosition(setPosition, defaultData)
-      isInitialMount.current = false;
-    } else {
-      fetchData().catch(console.error);
-    }
+  //   if(isInitialMount.current) {
+  //     geolocation.getCurrentPosition(setPosition, defaultData)
+  //     isInitialMount.current = false;
+  //   } else {
+  //     fetchData().catch(console.error);
+  //   }
 
     
-  }, [location, unit])
+  // }, [location, unit])
 
   // handle API call for search function
   useEffect(() => {
@@ -67,52 +69,61 @@ function App() {
   return (
     <>
       <header>
-        <button type="button" aria-label="Open Menu"><img src={menuBtn} alt="Menu" width="24" height="24" /></button>
+        <button type="button" aria-label="Open Menu" onClick={() => {
+          setOpen(true);
+        }} className="iconBtn"><MenuIcon /></button>
         <span>Dark/Light</span>
-        <nav>
-        <button type="button" aria-label="Close Menu"><img src={closeBtn} alt="Close" width="24" height="24" /></button>
-        <div>
-          <input type="search" name="search" id="search" placeholder="Search for a city" value={input} onChange={(event) => {
-            setInput(event.target.value)
-          }} />
-          <button type="button" aria-label="Use current location" onClick={() => {
-            geolocation.getCurrentPosition(setPosition)
-          }}><img src={locationBtn} alt="Location" width="24" height="24" /></button>
-        </div>
-        <div>
-          {geoData.length > 0 ? geoData.map((item, id) => {
-            return(
-              <div key={id + Date.now()}>
-                <button type="button" onClick={() => {
-                  item.state ? 
-                  setLocationList([...locationList, {name: item.name, country: item.country,state: item.state, lat: item.lat, lon: item.lon}]) : 
-                  setLocationList([...locationList, {name: item.name, country: item.country, lat: item.lat, lon: item.lon}])
-                  setInput('');
-                }}>{item.name}{item.state && `, ${item.state}`}, {item.country}</button>
-              </div>)
-          }) : locationList.map((item, id) => {
-            return(
-              <div key={id + Date.now()}>
-                <button type="button" onClick={() => {
-                  setLocation({lat: item.lat, lon: item.lon});
-                }}>{item.name}{item.state && `, ${item.state}`}, {item.country}</button>
-                <button type="button" aria-label="Delete Location"onClick={() => {
-                  const copy = [...locationList].filter(e => {
-                    return (e.lat != item.lat && e.lon != item.lon)
-                  });
-                  setLocationList(copy);
-                }}><img src={closeBtn} alt="Delete" width="24" height="24" /></button>
-              </div>)
-          })} 
-        </div>
-        <div>
-          <div><button type="button" onClick={() => {
-            setUnit('metric')
-          }}>°C</button><button type="button" onClick={() => {
-            setUnit('imperial')
-          }}>°F</button></div>
-          <span>Light / Dark</span>
-        </div>
+        <nav className={open ? 'open' : undefined}>
+          <button type="button" aria-label="Close Menu"onClick={() => {
+            setOpen(false);
+          }}className="iconBtn close"><CrossIcon /></button>
+          <div className="navContent">
+            <div className="searchBar">
+              <input type="text" name="search" id="search" placeholder="Search for a city" value={input} onChange={(event) => {
+                setInput(event.target.value);
+              }} />
+              <button type="button" aria-label="Use current location" onClick={() => {
+                geolocation.getCurrentPosition(setPosition);
+                setOpen(false);
+              }} className="iconBtn"><LocationIcon /></button>
+            </div>
+            <div className="list">
+              {geoData.length > 0 ? geoData.map((item, id) => {
+                return(
+                    <button type="button" key={id + Date.now()} className="searchItem" onClick={() => {
+                      item.state ?
+                      setLocationList([...locationList, {name: item.name, country: item.country,state: item.state, lat: item.lat, lon: item.lon}]) :
+                      setLocationList([...locationList, {name: item.name, country: item.country, lat: item.lat, lon: item.lon}])
+                      setLocation({lat: item.lat, lon: item.lon});
+                      setOpen(false);
+                      setInput('');
+                    }}>{item.name}{item.state && `, ${item.state}`}, {item.country}</button>
+                  )
+              }) : locationList.map((item, id) => {
+                return(
+                  <div key={id + Date.now()} className="listItem">
+                    <button type="button" onClick={() => {
+                      setLocation({lat: item.lat, lon: item.lon});
+                      setOpen(false);
+                    }}>{item.name}{item.state && `, ${item.state}`}, {item.country}</button>
+                    <button type="button" aria-label="Delete Location"onClick={() => {
+                      const copy = [...locationList].filter(e => {
+                        return (e.lat != item.lat && e.lon != item.lon)
+                      });
+                      setLocationList(copy);
+                    }} className="iconBtn"><CrossIcon /></button>
+                  </div>)
+              })}
+            </div>
+            <div className="unitBtns">
+              <button type="button" onClick={() => {
+                setUnit('metric')
+              }} className={unit == 'metric' ? 'active' : undefined}>°C</button>
+              <button type="button" onClick={() => {
+                setUnit('imperial')
+              }} className={unit == 'imperial' ? 'active' : undefined}>°F</button>
+            </div>
+          </div>
         </nav>
       </header>
       <main>
