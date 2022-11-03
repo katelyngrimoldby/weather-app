@@ -1,0 +1,45 @@
+@import 'variables.css';
+
+
+  .currentWeather {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 300px;
+    margin-top: 1rem;
+    
+    .locationName {
+      align-self: flex-start;
+      color: var(--text-main);
+    }
+
+    .main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .text {
+      display: flex;
+      flex-direction: column;
+      width: 100px;
+    }
+    .temp {
+      font-size: 2rem;
+      color: var(--text-main);
+    }
+    .status {
+      color: var(--text-accent);
+    }
+
+    .extra {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      
+      span {
+        color: var(--text-accent);
+      }
+    }
+  }
