@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react"
 import axios from "axios"
-import {weatherData, geoData, locationData} from '../types'
+import {weatherData, geoData, locationData, forecastData} from '../types'
 import MenuIcon from "./components/MenuIcon"
 import CrossIcon from "./components/CrossIcon"
 import LocationIcon from "./components/LocationIcon"
 import Current from './components/Current'
+import Forecast from "./components/Forecast"
 import './styles/main.css'
 
 
@@ -20,7 +21,8 @@ function App() {
   const [locationList, setLocationList] = useState<locationData[]>([]);
   const [input, setInput] = useState("");
   const [unit, setUnit] =useState<'metric' | 'imperial'>('metric')
-  const [currentdata, setCurrentData] = useState<undefined | weatherData>()
+  const [currentData, setCurrentData] = useState<undefined | weatherData>()
+  const [forecastData, setForecastData] = useState<undefined | forecastData>()
   const [geoData, setGeoData] = useState<geoData[]>([])
 
   const isInitialMount = useRef(true);
@@ -29,29 +31,32 @@ function App() {
     setLocation({lat: input.coords.latitude, lon: input.coords.longitude}) 
   }
 
-  //Update data when location or units change
-  // useEffect(() => {
-  //   const defaultData = async () => {
-  //     setLocation({lat: 44.34, lon: 10.99})
-  //   }
-  //   const fetchData = async () => {
-  //     if(location) {
-  //       const data = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${location?.lat}&lon=${location?.lon}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
+  // Update data when location or units change
+  useEffect(() => {
+    const defaultData = async () => {
+      setLocation({lat: 44.34, lon: 10.99})
+    }
+    const fetchData = async () => {
+      if(location) {
+        const currentData = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
 
-  //     setCurrentData(data);
-  //     }
+        const forecast = await get<forecastData>(`https://api.openweathermap.org/data/2.5/forecast?lat=${location.lat}&lon=${location.lon}&units=${unit}&cnt=10&appid=${import.meta.env.VITE_API_KEY}`);
+
+      setCurrentData(currentData);
+      setForecastData(forecast);
+      }
       
-  //   }
+    }
 
-  //   if(isInitialMount.current) {
-  //     geolocation.getCurrentPosition(setPosition, defaultData)
-  //     isInitialMount.current = false;
-  //   } else {
-  //     fetchData().catch(console.error);
-  //   }
+    if(isInitialMount.current) {
+      geolocation.getCurrentPosition(setPosition, defaultData)
+      isInitialMount.current = false;
+    } else {
+      fetchData().catch(console.error);
+    }
 
     
-  // }, [location, unit])
+  }, [location, unit])
 
   // handle API call for search function
   useEffect(() => {
@@ -127,7 +132,8 @@ function App() {
         </nav>
       </header>
       <main>
-      {currentdata && <Current data={currentdata} unit={unit} />}
+      {currentData && <Current data={currentData} unit={unit} />}
+      {forecastData && <Forecast data={forecastData} unit={unit} />}
       </main>
     </>
   )
