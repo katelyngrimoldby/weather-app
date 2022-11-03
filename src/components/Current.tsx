@@ -1,4 +1,5 @@
 import { weatherData } from "../../types";
+import '../styles/Current.css'
 
 const getDirection = (deg: number) => {
   switch (true) {
@@ -25,18 +26,18 @@ const getDirection = (deg: number) => {
 const Current = ({data, unit}: {data: weatherData, unit: 'metric' | 'imperial'}) => {
 
   return (
-    <section>
-          <h1>{data.name}</h1>
-          <div>
-            <img src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`} alt={data.weather[0].main} />
-            <div>
-              <span>{data.main.temp}°</span>
-              <span>{data.weather[0].description}</span>
+    <section className="currentWeather">
+          <h1 className="locationName">{data.name}</h1>
+          <div className="main">
+            <img src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`} alt={data.weather[0].main} width="100" height="100" />
+            <div className="text">
+              <span className="temp">{data.main.temp}°</span>
+              <span className="status">{data.weather[0].description}</span>
             </div>
-            <div>
-              <span>Feels Like {data.main.feels_like}° | Humidity {data.main.humidity}%</span>
-              <span>Wind {getDirection(data.wind.deg)} {data.wind.speed}{unit == 'metric' ? 'Km/h' : 'M/h'}</span>
-            </div>
+          </div>
+          <div className="extra">
+            <span>Feels Like {data.main.feels_like}° | Humidity {data.main.humidity}%</span>
+            <span>Wind {getDirection(data.wind.deg)} {data.wind.speed}{unit == 'metric' ? 'Km/h' : 'M/h'}</span>
           </div>
         </section>
   )
