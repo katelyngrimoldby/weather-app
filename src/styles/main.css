@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+#root {
+  height: 100vh;
+}
+
 @media screen and (min-width: 0px) {
   .iconBtn {
     background: none;
@@ -13,7 +17,14 @@
   }
 
   header {
+    position: relative;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5%;
+    background: linear-gradient(var(--background-main), var(--background-accent));
+    box-shadow: 0px 10px 30px var(--accent);
+    z-index: 2;
   }
 
   nav {
@@ -38,7 +49,7 @@
   }
 
   .close {
-    align-self: end;
+    align-self: flex-end;
     svg {
       width: 2rem;
     height: 2rem;
@@ -50,7 +61,7 @@
     
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 2rem;
     height: 100%;
@@ -123,5 +134,12 @@
       background-color: var(--text-main);
       color: var(--background-main)
     }
+  }
+
+  main {
+    min-height: 100%;
+    padding: 5%;
+    z-index: 1;
+    background: linear-gradient(var(--background-main), var(--background-accent));
   }
 }
