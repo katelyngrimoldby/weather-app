@@ -23,6 +23,18 @@ const getDirection = (deg: number) => {
       return '';
   }
 }
+
+const capitalize = (sentence: string) => {
+  const arr = sentence.split(" ");
+
+  const capitalizedArr = arr.map(word => {
+
+    return word[0].toUpperCase() + word.substring(1);
+  });
+
+  return capitalizedArr.join(" ");
+}
+
 const Current = ({data, unit}: {data: weatherData, unit: 'metric' | 'imperial'}) => {
 
   return (
@@ -31,12 +43,12 @@ const Current = ({data, unit}: {data: weatherData, unit: 'metric' | 'imperial'})
           <div className="main">
             <img src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`} alt={data.weather[0].main} width="100" height="100" />
             <div className="text">
-              <span className="temp">{data.main.temp}°</span>
-              <span className="status">{data.weather[0].description}</span>
+              <span className="temp">{Math.round(data.main.temp)}°</span>
+              <span className="status">{capitalize(data.weather[0].description)}</span>
             </div>
           </div>
           <div className="extra">
-            <span>Feels Like {data.main.feels_like}° | Humidity {data.main.humidity}%</span>
+            <span>Feels Like {Math.round(data.main.feels_like)}° | Humidity {data.main.humidity}%</span>
             <span>Wind {getDirection(data.wind.deg)} {data.wind.speed}{unit == 'metric' ? 'Km/h' : 'M/h'}</span>
           </div>
         </section>
