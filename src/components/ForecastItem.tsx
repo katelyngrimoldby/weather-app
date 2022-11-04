@@ -53,7 +53,7 @@ const ForecastItem = ({data, unit}: {data: forecastEntry, unit: 'metric' | 'impe
   return(
     <div className="data">
             <div className="top">
-              <div>
+              <div className="left">
                 <span>{getTime(data.dt_txt)}</span>
                   <img src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`} alt={data.weather[0].main} width="100" height="100" />
               </div>
@@ -62,10 +62,12 @@ const ForecastItem = ({data, unit}: {data: forecastEntry, unit: 'metric' | 'impe
                 setOpen(!open);
               }}>{open ? '^' : 'v'}</button>
             </div>
-            <div className={open ? "open" : undefined}>
+            <div className={open ? "bottom open" : "bottom"}>
             <span>{data.weather[0].description}</span>
-              <span>{getDirection(data.wind.deg)} {data.wind.speed}{unit == 'metric' ? 'Km/h' : 'M/h'}</span>
-              <span>{Math.round(data.pop)}%</span>
+              <div className="right">
+                <span>{getDirection(data.wind.deg)} {data.wind.speed}{unit == 'metric' ? 'Km/h' : 'M/h'}</span>
+                <span>{Math.round(data.pop)}%</span>
+              </div>
             </div>
           </div>
   )
