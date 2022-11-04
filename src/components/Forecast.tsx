@@ -1,5 +1,6 @@
 import { forecastData } from "../../types"
 import ForecastItem from "./ForecastItem"
+import '../styles/Forecast.css'
 
 
 const Forecast = ({data, unit}: {data: forecastData, unit: 'metric' | 'imperial'}) => {
