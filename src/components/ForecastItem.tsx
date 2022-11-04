@@ -47,6 +47,18 @@ const getDirection = (deg: number) => {
   }
 }
 
+const capitalize = (sentence: string) => {
+  const arr = sentence.split(" ");
+
+  const capitalizedArr = arr.map(word => {
+
+    return word[0].toUpperCase() + word.substring(1);
+  });
+
+  return capitalizedArr.join(" ");
+}
+
+
 const ForecastItem = ({data, unit}: {data: forecastEntry, unit: 'metric' | 'imperial'}) => {
   const [open, setOpen] = useState(false)
 
@@ -63,7 +75,7 @@ const ForecastItem = ({data, unit}: {data: forecastEntry, unit: 'metric' | 'impe
               }}>{open ? '-' : '+'}</button>
             </div>
             <div className={open ? "bottom open" : "bottom"}>
-            <span>{data.weather[0].description}</span>
+            <span>{capitalize(data.weather[0].description)}</span>
               <div className="right">
                 <span>{getDirection(data.wind.deg)} {data.wind.speed}{unit == 'metric' ? 'Km/h' : 'M/h'}</span>
                 <span>{Math.round(data.pop)}%</span>
