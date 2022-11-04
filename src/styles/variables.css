@@ -1,4 +1,4 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   --background-main: #F8FAFC;
@@ -6,12 +6,14 @@
   --text-main: #334155;
   --text-accent: #1E293B;
   --accent: #E2E8F0
+  --font: 'Inter', sans-serif;
 }
 
-[data-theme: dark] {
+[data-theme= dark] {
   --background-main: #1E293B;
   --background-accent: #334155;
   --text-main: #F1F5F9;
   --text-accent: #F8FAFC;
-  --accent: #0F172A
+  --accent: #0F172A;
+  --font: 'Inter', sans-serif;
 }
