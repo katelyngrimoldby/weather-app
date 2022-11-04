@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react"
 import axios from "axios"
 import {weatherData, geoData, locationData, forecastData} from '../types'
+import moon from './assets/moon.svg';
+import sun from './assets/sun.svg';
 import MenuIcon from "./components/MenuIcon"
 import CrossIcon from "./components/CrossIcon"
 import LocationIcon from "./components/LocationIcon"
@@ -17,10 +19,11 @@ async function get<T> (path: string): Promise<T> {
 function App() {
   const geolocation = navigator.geolocation;
   const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>(window.matchMedia('(prefers-color-scheme: dark') ? 'dark' : 'light')
   const [location, setLocation] = useState<undefined | {lat: number, lon: number}>();
   const [locationList, setLocationList] = useState<locationData[]>([]);
   const [input, setInput] = useState("");
-  const [unit, setUnit] =useState<'metric' | 'imperial'>('metric')
+  const [unit, setUnit] = useState<'metric' | 'imperial'>('metric')
   const [currentData, setCurrentData] = useState<undefined | weatherData>()
   const [forecastData, setForecastData] = useState<undefined | forecastData>()
   const [geoData, setGeoData] = useState<geoData[]>([])
@@ -40,9 +43,11 @@ function App() {
       if(location) {
         const currentData = await get<weatherData>(`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&units=${unit}&appid=${import.meta.env.VITE_API_KEY}`);
 
+        setCurrentData(currentData);
+
         const forecast = await get<forecastData>(`https://api.openweathermap.org/data/2.5/forecast?lat=${location.lat}&lon=${location.lon}&units=${unit}&cnt=10&appid=${import.meta.env.VITE_API_KEY}`);
 
-      setCurrentData(currentData);
+      
       setForecastData(forecast);
       }
       
@@ -70,6 +75,11 @@ function App() {
       setGeoData([]);
     }
   }, [input])
+
+  //handle The updates to root
+  useEffect(() => {
+    document.getElementById('root')?.setAttribute('data-theme', theme)
+  }, [theme])
  
   return (
     <>
@@ -77,7 +87,9 @@ function App() {
         <button type="button" aria-label="Open Menu" onClick={() => {
           setOpen(true);
         }} className="iconBtn menu"><MenuIcon /></button>
-        <span>Dark/Light</span>
+        <button type="button" className="iconBtn theme" aria-label="Toggle Theme" onClick={() => {
+          theme == 'dark' ? setTheme('light') : setTheme('dark');
+        }}>{theme == 'dark' ? (<img src={sun} alt="Light Mode" width="36" height="36" />) : <img src={moon} alt="Dark Mode" width="36" height="36" />}</button>
         <nav className={open ? 'open' : undefined}>
           <button type="button" aria-label="Close Menu"onClick={() => {
             setOpen(false);
