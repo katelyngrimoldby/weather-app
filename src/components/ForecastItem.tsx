@@ -60,7 +60,7 @@ const ForecastItem = ({data, unit}: {data: forecastEntry, unit: 'metric' | 'impe
               <span>{Math.round(data.main.temp)}°</span>
               <button type="button" onClick={() => {
                 setOpen(!open);
-              }}>{open ? '^' : 'v'}</button>
+              }}>{open ? '-' : '+'}</button>
             </div>
             <div className={open ? "bottom open" : "bottom"}>
             <span>{data.weather[0].description}</span>
