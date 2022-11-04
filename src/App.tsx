@@ -66,7 +66,7 @@ function App() {
   // handle API call for search function
   useEffect(() => {
     const fetchData = async () => {
-      const data = await get<geoData[]>(`http://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${import.meta.env.VITE_API_KEY}`)
+      const data = await get<geoData[]>(`https://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${import.meta.env.VITE_API_KEY}`)
       setGeoData(data);
     }
     if(input.length > 0) {
