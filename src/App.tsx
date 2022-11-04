@@ -76,7 +76,7 @@ function App() {
       <header>
         <button type="button" aria-label="Open Menu" onClick={() => {
           setOpen(true);
-        }} className="iconBtn"><MenuIcon /></button>
+        }} className="iconBtn menu"><MenuIcon /></button>
         <span>Dark/Light</span>
         <nav className={open ? 'open' : undefined}>
           <button type="button" aria-label="Close Menu"onClick={() => {
