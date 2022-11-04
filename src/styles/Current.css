@@ -11,6 +11,7 @@
     .locationName {
       align-self: flex-start;
       color: var(--text-main);
+      font-family: var(--font);
     }
 
     .main {
@@ -27,9 +28,12 @@
     .temp {
       font-size: 2rem;
       color: var(--text-main);
+      font-family: var(--font);
     }
     .status {
       color: var(--text-accent);
+      font-family: var(--font);
+      font-weight: 500;
     }
 
     .extra {
@@ -40,6 +44,7 @@
       
       span {
         color: var(--text-accent);
+        font-family: var(--font);
       }
     }
   }
